@@ -1,6 +1,9 @@
 /**
- *
  * swap_int - swaps the values of two variables by eachother
+ *
+ * @a: variable
+ *
+ * @b: variable
  *
  * Description: by the help pointers this program changes values.
  */
