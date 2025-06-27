@@ -6,7 +6,7 @@
  *
  * @s: pointer to the char values.
  * @b: value which is going to be changed with values of s pointer.
- * n: number of times
+ * @n: number of times
  *
  * Return: pointer to the value of char.
  */
