@@ -9,7 +9,7 @@
  * n: number of times
  *
  * Return: pointer to the value of char.
- * */
+ */
 
 char *_memset(char *s, char b, unsigned int n)
 {
@@ -22,5 +22,5 @@ char *_memset(char *s, char b, unsigned int n)
 		i++;
 	}
 
-	return s;
+	return (s);
 }
