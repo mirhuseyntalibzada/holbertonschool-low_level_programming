@@ -2,41 +2,69 @@
 #include <stdio.h>
 
 /**
- * main - Multiplies two positive integers passed as command-line arguments
- *        and prints the result followed by a new line.
- *        If the number of arguments is not exactly 2, prints "Error".
- * @argc: Argument count
- * @argv: Array of strings representing command-line arguments
+ * _str_to_int - Converts a string to an integer (supports negative numbers)
+ * @s: The string to convert
  *
- * Return: 0 if successful, 1 if error
+ * Return: The converted integer, or 2147483647 if invalid (to trigger error)
+ *
+ */
+
+int _str_to_int(char *s)
+{
+	int j, number, sign;
+
+	j = 0;
+	number = 0;
+	sign = 1;
+
+	if (s[j] == '-')
+	{
+		sign = -1;
+		j++;
+	}
+
+	while (s[j] != '\0')
+	{
+		if (s[j] < '0' || s[j] > '9')
+		{
+			return (2147483647);
+		}
+
+		number = number * 10 + (s[j] - '0');
+		j++;
+	}
+
+	number *= sign;
+	return (number);
+}
+
+/**
+ * main - Multiplies two integers passed as arguments
+ * @argc: Argument count
+ * @argv: Argument vector
+ *
+ * Return: 0 if success, 1 if error
  */
 
 int main(int argc, char **argv)
 {
-	int num1, num2, i;
-	
+	int i, result;
+
 	if (argc != 3)
 	{
 		printf("Error\n");
 		return (1);
 	}
 
-	i = 0;
-	num1 = 0;
-	while (argv[1][i] != '\0')
+	i = 1;
+	result = 1;
+
+	while (i < argc)
 	{
-		num1 = (num1 * 10) + (argv[1][i] - '0');
+		result *= _str_to_int(argv[i]);
 		i++;
 	}
 
-	i = 0;
-	num2 = 0;
-	while (argv[2][i] != '\0')
-	{
-		num2 = (num2 * 10) + (argv[2][i] - '0');
-		i++;
-	}
-
-	printf("%d\n", num1 * num2);
+	printf("%d\n", result);
 	return (0);
 }
