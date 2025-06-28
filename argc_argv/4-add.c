@@ -16,14 +16,15 @@
 
 int main(int argc, char **argv)
 {
-	int i, j;
-	int sum = 0;
+	int i, j, number, sum;
 
 	i = 1;
+	sum = 0;
 
 	while (i < argc)
 	{
 		j = 0;
+		number = 0;
 
 		while (argv[i][j] != '\0')
 		{
@@ -32,9 +33,11 @@ int main(int argc, char **argv)
 				printf("Error\n");
 				return (1);
 			}
-			sum = sum + argv[i][j] - '0';
+
+			number = (number * 10) + (argv[i][j] - '0');
 			j++;
 		}
+		sum += number;
 		i++;
 	}
 

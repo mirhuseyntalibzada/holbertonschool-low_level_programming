@@ -13,13 +13,13 @@
 
 int main(int argc, char **argv)
 {
+	int num1, num2, i;
+	
 	if (argc != 3)
 	{
 		printf("Error\n");
 		return (1);
 	}
-
-	int num1, num2, i;
 
 	i = 0;
 	num1 = 0;
