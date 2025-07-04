@@ -38,9 +38,6 @@ char *str_concat(char *s1, char *s2)
 	char *concatStr;
 	int length1, length2, i;
 
-	if (s1[0] == '\0' || s2[0] == '\0')
-		return (NULL);
-
 	length1 = _length(s1);
 	length2 = _length(s2);
 
