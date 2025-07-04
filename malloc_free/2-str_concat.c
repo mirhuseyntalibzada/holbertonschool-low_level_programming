@@ -38,10 +38,20 @@ char *str_concat(char *s1, char *s2)
 	char *concatStr;
 	int length1, length2, i;
 
+	if (s1 == NULL)
+	{
+		s1 = "";
+	}
+
+	if (s2 == NULL)
+	{
+		s2 = "";
+	}
+
 	length1 = _length(s1);
 	length2 = _length(s2);
 
-	concatStr = malloc((length1 + length2) * sizeof(char));
+	concatStr = malloc((length1 + length2 + 1) * sizeof(char));
 
 	if (concatStr == NULL)
 		return (NULL);
