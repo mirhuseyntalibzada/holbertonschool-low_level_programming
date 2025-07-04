@@ -19,9 +19,7 @@ char *_strdup(char *str)
 	int length, i;
 
 	if (str == NULL)
-	{
-		str = "";
-	}
+		return (NULL);
 
 	length = 0;
 
