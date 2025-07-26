@@ -1,36 +1,36 @@
 #include "hash_tables.h"
 
 /**
- * update_node_value - Updates the value of an existing hash node.
- * @node: The node to update.
- * @value: The new value to assign.
+ * update_value - Updates the value of an existing node.
+ * @node: The node whose value is to be updated.
+ * @value: The new value.
  *
  * Return: 1 on success, 0 on failure.
  */
-int update_node_value(hash_node_t *node, const char *value)
+int update_value(hash_node_t *node, const char *value)
 {
-	char *value_copy;
+	char *new_value;
 
-	value_copy = strdup(value);
-	if (value_copy == NULL)
+	new_value = strdup(value);
+	if (new_value == NULL)
 		return (0);
 
 	free(node->value);
-	node->value = value_copy;
+	node->value = new_value;
 	return (1);
 }
 
 /**
- * create_and_add_node - Creates a new hash node and adds it to the hash table.
+ * add_node - Creates a new node and adds it at the beginning of a list.
  * @ht: The hash table.
  * @key: The key for the new node.
  * @value: The value for the new node.
- * @index: The index in the hash table's array where the node should be added.
+ * @index: The index in the array where the list is located.
  *
  * Return: 1 on success, 0 on failure.
  */
-int create_and_add_node(hash_table_t *ht, const char *key,
-			       const char *value, unsigned long int index)
+int add_node(hash_table_t *ht, const char *key,
+	     const char *value, unsigned long int index)
 {
 	hash_node_t *new_node;
 
@@ -60,7 +60,7 @@ int create_and_add_node(hash_table_t *ht, const char *key,
 }
 
 /**
- * hash_table_set - Adds or updates an element in the hash table.
+ * hash_table_set - Adds or updates an element in a hash table.
  * @ht: The hash table.
  * @key: The key. Cannot be an empty string.
  * @value: The value associated with the key.
@@ -70,20 +70,21 @@ int create_and_add_node(hash_table_t *ht, const char *key,
 int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 {
 	unsigned long int index;
-	hash_node_t *current_node;
+	hash_node_t *current;
 
 	if (ht == NULL || ht->array == NULL || key == NULL || *key == '\0')
 		return (0);
 
 	index = key_index((const unsigned char *)key, ht->size);
-	current_node = ht->array[index];
+	current = ht->array[index];
 
-	while (current_node)
+	while (current != NULL)
 	{
-		if (strcmp(current_node->key, key) == 0)
-			return (update_node_value(current_node, value));
-		current_node = current_node->next;
+		if (strcmp(current->key, key) == 0)
+			return (update_value(current, value));
+		current = current->next;
 	}
 
-	return (create_and_add_node(ht, key, value, index));
+	return (add_node(ht, key, value, index));
 }
+
