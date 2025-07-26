@@ -9,23 +9,26 @@
 void error_exit(int code, const char *msg, const char *arg);
 
 /**
- * error_exit - Prints error message to STDERR and exits with given code.
+ * error_exit - Prints error message to STDERR and exits.
  * @code: Exit code.
- * @msg: Error message format.
- * @arg: Argument for the message.
+ * @msg: Error message.
+ * @arg: Extra argument for format (nullable).
  */
 void error_exit(int code, const char *msg, const char *arg)
 {
-	dprintf(STDERR_FILENO, msg, arg);
+	if (arg)
+		dprintf(STDERR_FILENO, msg, arg);
+	else
+		dprintf(STDERR_FILENO, "%s", msg);
 	exit(code);
 }
 
 /**
- * main - Copies content of a file to another file.
+ * main - Copies content from file_from to file_to.
  * @ac: Argument count.
  * @av: Argument vector.
  *
- * Return: 0 on success, exits on error.
+ * Return: 0 on success, or exits with error code.
  */
 int main(int ac, char **av)
 {
@@ -33,7 +36,7 @@ int main(int ac, char **av)
 	char buf[BUF_SIZE];
 
 	if (ac != 3)
-		error_exit(97, "Usage: cp %s %s\n", "file_from file_to");
+		error_exit(97, "Usage: cp file_from file_to\n", NULL);
 
 	fd_from = open(av[1], O_RDONLY);
 	if (fd_from == -1)
