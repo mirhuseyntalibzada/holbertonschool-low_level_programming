@@ -1,14 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/stat.h>
+
+void close_fd(int fd);
 
 /**
- * check_close - Closes a file descriptor and handles potential errors.
- * @fd: The file descriptor to close.
+ * close_fd - Closes a file descriptor and handles potential errors.
+ * @fd: The file descriptor to be closed.
+ *
+ * Description: If closing the file descriptor fails, it prints an error
+ * message to the standard error and exits with code 100.
  */
-void check_close(int fd)
+void close_fd(int fd)
 {
 	if (close(fd) == -1)
 	{
@@ -18,52 +24,22 @@ void check_close(int fd)
 }
 
 /**
- * copy_content - Reads from a source file and writes to a destination file.
- * @fd_from: The source file descriptor.
- * @fd_to: The destination file descriptor.
- * @from_name: The name of the source file (for error messages).
- * @to_name: The name of the destination file (for error messages).
- */
-void copy_content(int fd_from, int fd_to, char *from_name, char *to_name)
-{
-	ssize_t bytes_read, bytes_written;
-	char buffer[1024];
-
-	for (;;)
-	{
-		bytes_read = read(fd_from, buffer, 1024);
-		if (bytes_read == -1)
-		{
-			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", from_name);
-			check_close(fd_from);
-			check_close(fd_to);
-			exit(98);
-		}
-		if (bytes_read == 0)
-			break;
-
-		bytes_written = write(fd_to, buffer, bytes_read);
-		if (bytes_written != bytes_read)
-		{
-			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", to_name);
-			check_close(fd_from);
-			check_close(fd_to);
-			exit(99);
-		}
-	}
-}
-
-/**
- * main - Entry point for the file copy program.
- * @argc: The number of command-line arguments.
- * @argv: An array of command-line argument strings.
+ * main - Copies the content of one file to another.
+ * @argc: The number of arguments supplied to the program.
+ * @argv: An array of pointers to the arguments.
  *
- * Return: 0 on success, otherwise exits with an error code.
+ * Return: 0 on success.
+ *
+ * Description: The program exits with a specific code on failure:
+ * 97: Incorrect argument count.
+ * 98: Cannot read from the source file.
+ * 99: Cannot write to the destination file.
+ * 100: Cannot close a file descriptor.
  */
 int main(int argc, char *argv[])
 {
-	int fd_from, fd_to;
-	mode_t permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+	int fd_from, fd_to, bytes_read;
+	char buffer[1024];
 
 	if (argc != 3)
 	{
@@ -78,18 +54,35 @@ int main(int argc, char *argv[])
 		exit(98);
 	}
 
-	fd_to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, permissions);
+	fd_to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 	if (fd_to == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
-		check_close(fd_from);
+		close_fd(fd_from);
 		exit(99);
 	}
 
-	copy_content(fd_from, fd_to, argv[1], argv[2]);
+	while ((bytes_read = read(fd_from, buffer, 1024)) > 0)
+	{
+		if (write(fd_to, buffer, bytes_read) != bytes_read)
+		{
+			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+			close_fd(fd_from);
+			close_fd(fd_to);
+			exit(99);
+		}
+	}
 
-	check_close(fd_from);
-	check_close(fd_to);
+	if (bytes_read == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		close_fd(fd_from);
+		close_fd(fd_to);
+		exit(98);
+	}
+
+	close_fd(fd_from);
+	close_fd(fd_to);
 
 	return (0);
 }
